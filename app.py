@@ -25,8 +25,14 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev_secret_key")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)  # needed for url_for to generate with https
 
-# Configure database - Using SQLite for development, but can be switched to PostgreSQL in production
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///language_bot.db")
+# Configure database - Using SQLite for development, but will use PostgreSQL in Vercel production
+db_url = os.environ.get("DATABASE_URL", "sqlite:///language_bot.db")
+
+# Handle PostgreSQL format from Vercel/Heroku which starts with postgres://
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
