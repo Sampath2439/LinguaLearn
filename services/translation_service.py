@@ -1,12 +1,12 @@
-import requests
 import logging
 from flask import current_app
+from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
 def translate_text(text, source_language, target_language):
     """
-    Translate text from source language to target language using Google Translate API.
+    Translate text from source language to target language using OpenRouter API with Google Gemini model.
     
     Args:
         text (str): The text to translate
@@ -16,64 +16,50 @@ def translate_text(text, source_language, target_language):
     Returns:
         str: The translated text
     """
-    # Get API key from config
-    api_key = current_app.config.get('GOOGLE_TRANSLATE_API_KEY')
+    # Use OpenRouter API key for translation
+    api_key = current_app.config.get('OPENROUTER_API_KEY')
     
-    # Map language names to ISO codes for Google Translate API
-    language_map = {
-        "English": "en",
-        "Spanish": "es",
-        "French": "fr",
-        "German": "de",
-        "Italian": "it",
-        "Portuguese": "pt",
-        "Chinese": "zh-CN",
-        "Japanese": "ja",
-        "Korean": "ko",
-        "Russian": "ru",
-        "Arabic": "ar",
-        "Hindi": "hi",
-        "Dutch": "nl", 
-        "Swedish": "sv",
-        "Polish": "pl",
-        "Turkish": "tr"
-    }
-    
-    source_code = language_map.get(source_language, "auto")
-    target_code = language_map.get(target_language, "en")
-    
-    # If we don't have an API key, use a simplified approach
     if not api_key:
-        logger.warning("Google Translate API key not found, using mock translation")
+        logger.warning("OpenRouter API key not found, using mock translation")
         return f"[Translation to {target_language}]: {text}"
     
     try:
-        # Using Google Translate API v2
-        url = f"https://translation.googleapis.com/language/translate/v2"
+        # Initialize OpenAI client with OpenRouter endpoint
+        client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=api_key
+        )
         
-        # Prepare the request parameters
-        params = {
-            "key": api_key,
-            "q": text,
-            "target": target_code,
-        }
+        # Create a translation prompt
+        translation_prompt = f"""Translate the following text from {source_language} to {target_language}:
+
+Text to translate: "{text}"
+
+Translation:"""
+
+        # Get the model from the config or use the default one
+        model = current_app.config.get('OPENROUTER_MODEL', 'google/gemini-2.5-pro-exp-03-25:free')
         
-        # Add source language if it's not 'auto'
-        if source_code != "auto":
-            params["source"] = source_code
-            
-        # Make the API request
-        response = requests.post(url, params=params)
+        # Make the API request using the OpenAI client
+        completion = client.chat.completions.create(
+            extra_headers={
+                "HTTP-Referer": "https://linguabot.replit.app", 
+                "X-Title": "LinguaBot Language Learning Assistant",
+            },
+            model=model,
+            messages=[
+                {"role": "system", "content": f"You are a professional translator. Translate the given text from {source_language} to {target_language} accurately. Respond with only the translated text, no commentary."},
+                {"role": "user", "content": translation_prompt}
+            ]
+        )
         
-        # Check if the request was successful
-        if response.status_code == 200:
-            result = response.json()
-            translation = result["data"]["translations"][0]["translatedText"]
-            return translation
-        else:
-            logger.error(f"Google Translate API error: {response.status_code} - {response.text}")
-            return f"[Translation error: {response.status_code}]"
-    
+        translation = completion.choices[0].message.content.strip()
+        
+        # Clean up quotation marks if the model included them
+        translation = translation.strip('"')
+        
+        return translation
+        
     except Exception as e:
         logger.error(f"Error in translation service: {str(e)}")
         return f"[Translation error: {str(e)}]"
