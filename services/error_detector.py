@@ -1,6 +1,7 @@
-import requests
+import json
 import logging
 from flask import current_app
+from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,12 @@ def detect_errors(message, target_language, proficiency_level):
     if len(message.split()) < 2:
         return []
     
+    # Initialize OpenAI client with OpenRouter endpoint
+    client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=api_key
+    )
+    
     # System prompt for error detection
     system_prompt = f"""You are a language tutor analyzing text in {target_language} from a {proficiency_level.lower()} level student.
 Your task is to identify grammar, vocabulary, and syntax errors in their message.
@@ -50,35 +57,25 @@ If there are no errors, return an empty array for "errors".
 ONLY RETURN VALID JSON. Do not include any explanations or text before or after the JSON.
 """
     
-    # Prepare request to OpenRouter API
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
-    
-    data = {
-        "model": current_app.config.get('OPENROUTER_MODEL', 'google/gemini-pro-1.5-experimental'),
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": message}
-        ],
-        "response_format": {"type": "json_object"}
-    }
-    
     try:
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers=headers,
-            json=data,
-            timeout=30
+        # Get the model from the config or use the default one
+        model = current_app.config.get('OPENROUTER_MODEL', 'google/gemini-2.5-pro-exp-03-25:free')
+        
+        # Make the API request using the OpenAI client
+        completion = client.chat.completions.create(
+            extra_headers={
+                "HTTP-Referer": "https://linguabot.replit.app", 
+                "X-Title": "LinguaBot Language Learning Assistant",
+            },
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": message}
+            ],
+            response_format={"type": "json_object"}
         )
         
-        if response.status_code != 200:
-            logger.error(f"API error: {response.status_code} - {response.text}")
-            return []
-        
-        response_data = response.json()
-        content = response_data['choices'][0]['message']['content'].strip()
+        content = completion.choices[0].message.content.strip()
         
         # Parse the JSON response
         try:

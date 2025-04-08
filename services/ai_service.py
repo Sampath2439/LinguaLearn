@@ -1,8 +1,8 @@
 import os
 import json
-import requests
 import logging
 from flask import current_app
+from openai import OpenAI
 from services.translation_service import translate_text
 
 logger = logging.getLogger(__name__)
@@ -26,6 +26,12 @@ def generate_bot_response(user_message, scenario, target_language, native_langua
     if not api_key:
         logger.error("OpenRouter API key is not set")
         return "I'm sorry, I can't generate a response right now. API key is missing.", "Error: API key missing"
+    
+    # Initialize OpenAI client with OpenRouter endpoint
+    client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=api_key
+    )
     
     # Define scenario descriptions
     scenario_descriptions = {
@@ -66,34 +72,24 @@ GUIDELINES:
     else:
         user_prompt = user_message
     
-    # Prepare request to OpenRouter API
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
-    
-    data = {
-        "model": current_app.config.get('OPENROUTER_MODEL', 'google/gemini-pro-1.5-experimental'),
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ]
-    }
-    
     try:
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers=headers,
-            json=data,
-            timeout=30
+        # Get the model from the config or use the default one
+        model = current_app.config.get('OPENROUTER_MODEL', 'google/gemini-2.5-pro-exp-03-25:free')
+        
+        # Make the API request using the OpenAI client
+        completion = client.chat.completions.create(
+            extra_headers={
+                "HTTP-Referer": "https://linguabot.replit.app", 
+                "X-Title": "LinguaBot Language Learning Assistant",
+            },
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ]
         )
         
-        if response.status_code != 200:
-            logger.error(f"API error: {response.status_code} - {response.text}")
-            return f"I'm sorry, I encountered an error (status {response.status_code}).", "Error with API response"
-        
-        response_data = response.json()
-        bot_message = response_data['choices'][0]['message']['content'].strip()
+        bot_message = completion.choices[0].message.content.strip()
         
         # Translate the bot message to the user's native language
         translated_text = translate_text(bot_message, target_language, native_language)

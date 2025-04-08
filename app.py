@@ -35,7 +35,7 @@ db.init_app(app)
 
 # OpenRouter API configuration
 app.config["OPENROUTER_API_KEY"] = os.environ.get("OPENROUTER_API_KEY", "")
-app.config["OPENROUTER_MODEL"] = "google/gemini-pro-1.5-experimental"
+app.config["OPENROUTER_MODEL"] = "google/gemini-2.5-pro-exp-03-25:free"
 
 # Google Translate API configuration
 app.config["TRANSLATE_API_KEY"] = os.environ.get("TRANSLATE_API_KEY", "")
