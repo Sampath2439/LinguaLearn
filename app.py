@@ -33,9 +33,12 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # Initialize the database with the app
 db.init_app(app)
 
-# OpenRouter API configuration - used for both chat and translation
+# OpenRouter API configuration - used for chatbot functionality
 app.config["OPENROUTER_API_KEY"] = os.environ.get("OPENROUTER_API_KEY", "")
 app.config["OPENROUTER_MODEL"] = "google/gemini-2.5-pro-exp-03-25:free"
+
+# Google Translate API configuration
+app.config["GOOGLE_TRANSLATE_API_KEY"] = os.environ.get("GOOGLE_TRANSLATE_API_KEY", "")
 
 with app.app_context():
     # Import models to ensure they're registered with SQLAlchemy
