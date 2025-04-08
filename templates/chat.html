@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="chat-container">
+        <!-- Scenarios Panel -->
+        <div class="scenarios-panel">
+            <h2 class="scenario-title">Learning Scenarios</h2>
+            <div class="scenario-list">
+                {% for scenario in scenarios %}
+                <div class="scenario-item" data-scenario="{{ scenario.id }}" data-name="{{ scenario.name }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        {% if scenario.icon == "coffee" %}
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                        {% elif scenario.icon == "shopping-bag" %}
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        {% elif scenario.icon == "plane" %}
+                        <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"></path>
+                        {% elif scenario.icon == "users" %}
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        {% elif scenario.icon == "activity" %}
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        {% else %}
+                        <circle cx="12" cy="12" r="10"></circle>
+                        {% endif %}
+                    </svg>
+                    {{ scenario.name }}
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                <div style="font-weight: 500; margin-bottom: 0.5rem; color: var(--text);">Your Learning Profile</div>
+                <div style="color: var(--text-light); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                    <strong>Native:</strong> {{ user.native_language }}
+                </div>
+                <div style="color: var(--text-light); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                    <strong>Learning:</strong> {{ user.target_language }}
+                </div>
+                <div style="color: var(--text-light); font-size: 0.875rem;">
+                    <strong>Level:</strong> {{ user.proficiency_level }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Panel -->
+        <div class="chat-panel">
+            <div class="chat-header">
+                <h2 id="chat-title" class="chat-title">Select a scenario to begin</h2>
+                <div class="chat-actions">
+                    <button id="review-button" class="btn btn-outline">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        Review
+                    </button>
+                </div>
+            </div>
+            
+            <div id="chat-messages" class="chat-messages">
+                <div style="text-align: center; padding: 4rem 2rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <p style="color: var(--text-light); margin-top: 1.5rem;">
+                        Choose a scenario from the left panel to start a conversation
+                    </p>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <form id="chat-form" class="chat-input-form">
+                    <input type="text" id="chat-input" class="chat-input" placeholder="Type your message in {{ user.target_language }}..." disabled>
+                    <button type="submit" id="send-button" class="send-button" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Review Container (Hidden by default) -->
+    <div id="review-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 100; backdrop-filter: blur(5px); overflow-y: auto; padding: 2rem 1rem;">
+        <!-- Review content will be added dynamically -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tts.js') }}"></script>
+{% endblock %}

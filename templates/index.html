@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="setup-container">
+        <div class="setup-header">
+            <h1 class="setup-title">AI Language Learning Chatbot</h1>
+            <p class="setup-subtitle">Practice conversations in your target language with AI-powered feedback</p>
+        </div>
+        
+        <div class="card">
+            <h2 class="card-title">Let's get started</h2>
+            
+            <form action="{{ url_for('setup') }}" method="post">
+                <div class="form-group">
+                    <label for="native_language" class="form-label">Your Native Language</label>
+                    <select id="native_language" name="native_language" class="form-select" required>
+                        <option value="" disabled selected>Select your native language</option>
+                        {% for language in languages %}
+                        <option value="{{ language }}">{{ language }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="target_language" class="form-label">Language You Want to Learn</label>
+                    <select id="target_language" name="target_language" class="form-select" required>
+                        <option value="" disabled selected>Select target language</option>
+                        {% for language in languages %}
+                        <option value="{{ language }}">{{ language }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="proficiency_level" class="form-label">Your Current Proficiency Level</label>
+                    <select id="proficiency_level" name="proficiency_level" class="form-select" required>
+                        <option value="" disabled selected>Select your level</option>
+                        {% for level in proficiency_levels %}
+                        <option value="{{ level }}">{{ level }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    Start Learning
+                </button>
+            </form>
+        </div>
+        
+        <div class="card">
+            <h2 class="card-title">How it works</h2>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <div style="background-color: var(--primary); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">1</div>
+                    <div>
+                        <strong>Choose a scenario</strong>
+                        <p style="margin-top: 0.25rem; color: var(--text-light);">Select from various real-life scenarios like ordering at a café, shopping, or meeting new people.</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <div style="background-color: var(--primary); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">2</div>
+                    <div>
+                        <strong>Chat with the AI</strong>
+                        <p style="margin-top: 0.25rem; color: var(--text-light);">Have natural conversations with our AI in your target language. The bot adapts to your proficiency level.</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <div style="background-color: var(--primary); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">3</div>
+                    <div>
+                        <strong>Get real-time feedback</strong>
+                        <p style="margin-top: 0.25rem; color: var(--text-light);">Receive instant corrections on grammar, vocabulary, and syntax errors to improve your language skills.</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <div style="background-color: var(--primary); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">4</div>
+                    <div>
+                        <strong>Review your progress</strong>
+                        <p style="margin-top: 0.25rem; color: var(--text-light);">Get a summary of your mistakes and personalized suggestions for improvement after each session.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
