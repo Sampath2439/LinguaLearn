@@ -2,23 +2,15 @@ import os
 import logging
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-
-class Base(DeclarativeBase):
-    pass
-
+from extensions import db
 
 # Configure logging with more verbose format
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
-
-# Initialize SQLAlchemy
-db = SQLAlchemy(model_class=Base)
 
 # Create Flask app
 app = Flask(__name__)

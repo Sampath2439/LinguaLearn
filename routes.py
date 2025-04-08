@@ -1,7 +1,7 @@
 import uuid
 import json
 from flask import render_template, request, jsonify, session, redirect, url_for
-from app import db
+from extensions import db
 from models import User, Conversation, Message, LanguageError
 from services.ai_service import generate_bot_response
 from services.tts_service import generate_speech
