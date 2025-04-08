@@ -1,0 +1,74 @@
+
+
+### 💬 **Project Prompt: AI-Powered Language Learning Chatbot**
+
+**Overview:**
+Develop an AI-powered chatbot web application designed to help users learn new languages in an engaging and interactive way. The system provides scene-based conversations in the selected target language, gives real-time feedback on mistakes, tracks errors for performance evaluation, and includes translation and text-to-speech functionality.
+
+---
+
+### 🛠 **Tech Stack:**
+- **Backend:** Flask (Python)
+- **Frontend:** Tailwind CSS or a Next.js template (integrated with Flask backend)
+- **Database:** PostgreSQL (for storing user data, mistakes, and session history)
+- **AI Integration:** OpenRouter API with Gemini 2.5 Pro (Experimental)
+- **Translation & TTS:** Google Translate API or DeepL for translation, and gTTS or Web Speech API for text-to-speech
+- **Deployment:** Vercel
+
+---
+
+### 🌍 **Main Features:**
+
+#### 1. **User Setup Page (Homepage):**
+- User inputs:
+  - Native language (dropdown)
+  - Target language (dropdown)
+  - Current proficiency level (Beginner, Intermediate, Advanced)
+- Proceeds to detailed learning interface after submission.
+
+#### 2. **Detailed Learning Interface:**
+- Chat-like interface with AI chatbot.
+- UI styled with **Tailwind CSS** or **Next.js**.
+- Dropdown or buttons for selecting **learning scenarios** like:
+  - At a café
+  - Shopping at a mall
+  - Traveling at the airport
+  - Meeting new people
+  - Visiting a doctor
+- Bot chats in the selected language based on the scenario.
+
+#### 3. **Chatbot Features:**
+- Uses OpenRouter API with **Gemini 2.5 Pro Experimental model**.
+- Automatically translates bot messages to English (for clarification).
+- Text-to-speech feature via toggle button to hear the bot’s reply.
+- Detects and highlights incorrect vocabulary or grammar from user messages.
+- Offers suggestions/corrections below the chat bubble.
+- All mistakes logged in a PostgreSQL table.
+
+#### 4. **Error Tracking & Performance Review:**
+- Maintains a list of vocabulary/grammar mistakes per session.
+- At end of chat, shows:
+  - Summary of all mistakes
+  - Suggested areas to improve
+  - Repeat patterns (e.g., misuse of tenses or vocabulary)
+
+---
+
+### 🔧 **Functional Modules:**
+
+1. **User Session Management**
+2. **Scenario Selector UI**
+3. **Interactive Chat Module**
+4. **Mistake Detector and Corrector**
+5. **Speech Synthesis (TTS)**
+6. **English Translation Layer**
+7. **Error Logging with PostgreSQL**
+8. **Review & Feedback Generator**
+
+---
+
+### 📦 Deployment Plan:
+- Frontend hosted via **Vercel**
+- Backend (Flask API) can also be hosted via Vercel with `serverless` setup or on **Replit** with HTTPS tunneling
+- PostgreSQL database hosted on **Supabase** or **Render**
+
