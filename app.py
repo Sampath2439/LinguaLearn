@@ -6,6 +6,10 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from extensions import db
 
+from dotenv import load_dotenv
+load_dotenv()
+
+
 # Configure logging with more verbose format
 logging.basicConfig(
     level=logging.DEBUG,
@@ -35,8 +39,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 
 # OpenRouter API configuration - used for both chatbot and translation functionality
-app.config["OPENROUTER_API_KEY"] = os.environ.get("OPENROUTER_API_KEY", "")
-app.config["OPENROUTER_MODEL"] = "google/gemini-2.5-pro-exp-03-25:free"
+app.config["OPENROUTER_API_KEY"] = os.environ.get("OPENROUTER_API_KEY", "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")
+app.config["OPENROUTER_MODEL"] = "google/gemini-2.0-flash-exp:free"
 
 with app.app_context():
     # Import models to ensure they're registered with SQLAlchemy
