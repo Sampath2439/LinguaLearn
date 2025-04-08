@@ -58,7 +58,3 @@ This project is configured for deployment on Vercel. Follow these steps to deplo
    ```
    python main.py
    ```
-
-## License
-
-[MIT License](LICENSE)
