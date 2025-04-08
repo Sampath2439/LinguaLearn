@@ -11,8 +11,11 @@ class Base(DeclarativeBase):
     pass
 
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
+# Configure logging with more verbose format
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(model_class=Base)
